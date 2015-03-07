@@ -37,12 +37,14 @@ Mood.all = function(callback) {
 	});
 };
 
+Mood._index = 0;
+
 Mood.get = function(callback) {
 
 	Mood.all(function(err, items) {
 		var id = items.items[items.items.length-1].id;
 		console.log("last items: %j", id);
-		var options = getOptionFor('/v1/analytics/' + id);
+		var options = getOptionFor('/v1/analytics/' + id + '/aggregate?interval=quarter&report=standard&format=csv');
 		console.log("%j", options);
 		https.get(options, function(response) {
 			var str = "";
@@ -50,15 +52,45 @@ Mood.get = function(callback) {
 				str += chunk;
 			});
 
-			//the whole response has been recieved, so we just print it out here
 			response.on('end', function () {
-				// console.log("%j", str);
 				parse(str, {comment: '#'}, function(err, output){
-					callback(null, output);
+
+					console.log(output);
+
+
+					var xxx = {};
+					for (var col = 16; col < output[0].length; col++) {
+						var name = output[0][col];
+						console.log(name);
+						for (var row = 1; row < 5; row++) {
+							if (xxx[name])
+								xxx[name] = 0;
+							xxx[name] = xxx[name] + Number(output[row][col]);
+						};
+					};
+
+					// if (Mood._intervalId)
+					// 	clearInterval(Mood._intervalId)
+
+					// Mood._intervalId = setInterval(function() {
+					// 	if (Mood._index >= output.length)
+					// 		Mood._index = 0;
+
+					// 	Mood._onChange(output[Mood._index]);
+					// 	Mood._index = Mood._index + 1;
+					// }, 1000)
+
+					// callback(null, output[2]);
+					console.log(xxx);
+					callback(null, 'joy');
 				});
 			});
 		});
 	});
+};
+
+Mood.onChange = function(name, callback) {
+	Mood._onChange = callback;
 };
 
 module.exports = Mood;

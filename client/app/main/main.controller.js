@@ -9,11 +9,18 @@ angular.module('idea15App')
       socket.syncUpdates('thing', $scope.awesomeThings);
     });
 
+    var calculateColor = function(mood) {
+      console.log(mood);
+      if (mood == 'joy') return "#ffcc00";
+      return "#cc0000"
+    };
+
     $scope.startMood = function() {
-      $http.get('/api/moods').success(function(mood) {
-        $scope.mood = mood;
-        socket.syncUpdates('mood', $scope.mood);
-    });
+        $http.get('/api/moods').success(function(mood) {
+          $scope.mood = mood;
+          $scope.moodColor = calculateColor(mood);
+          socket.syncUpdates('mood', $scope.mood);
+      });
     };
 
     $scope.addThing = function() {
@@ -31,4 +38,5 @@ angular.module('idea15App')
     $scope.$on('$destroy', function () {
       socket.unsyncUpdates('thing');
     });
+    $scope.startMood();
   });

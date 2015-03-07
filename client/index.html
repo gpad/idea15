@@ -20,6 +20,12 @@
       <!-- injector:css -->
       <!-- endinjector -->
     <!-- endbuild -->
+
+
+        <link href="asset/css/royalslider.css" rel="stylesheet">
+        <link href="asset/css/rs-minimal-white.css" rel="stylesheet">
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    
   </head>
   <body ng-app="idea15App">
     <!--[if lt IE 7]>
@@ -78,5 +84,35 @@
           <script src="components/socket/socket.service.js"></script>
           <!-- endinjector -->
         <!-- endbuild -->
+
+
+        <script src="assets/js/jquery.royalslider.min.js"></script>
+
+
+        <script>
+            jQuery(document).ready(function($) {
+              jQuery.rsCSS3Easing.easeOutBack = 'cubic-bezier(0.175, 0.885, 0.320, 1.275)';
+              $('#slider-with-blocks-1').royalSlider({
+                arrowsNav: true,
+                arrowsNavAutoHide: false,
+                fadeinLoadedSlide: false,
+                controlNavigationSpacing: 0,
+                controlNavigation: 'bullets',
+                imageScaleMode: 'none',
+                imageAlignCenter:false,
+                blockLoop: true,
+                loop: true,
+                numImagesToPreload: 6,
+                transitionType: 'fade',
+                keyboardNavEnabled: true,
+                block: {
+                  delay: 400
+                }
+              });
+            });
+        </script>
+
+
+
 </body>
 </html>

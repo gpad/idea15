@@ -10,9 +10,9 @@ exports.register = function(socket) {
   // Mood.schema.post('save', function (doc) {
   //   onSave(socket, doc);
   // });
-  // Mood.schema.post('remove', function (doc) {
-  //   onRemove(socket, doc);
-  // });
+  Mood.onChange('change', function (mood) {
+    onSave(socket, mood);
+  });
 }
 
 function onSave(socket, doc, cb) {
