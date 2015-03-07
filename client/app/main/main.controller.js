@@ -9,6 +9,13 @@ angular.module('idea15App')
       socket.syncUpdates('thing', $scope.awesomeThings);
     });
 
+    $scope.startMood = function() {
+      $http.get('/api/moods').success(function(mood) {
+        $scope.mood = mood;
+        socket.syncUpdates('mood', $scope.mood);
+    });
+    };
+
     $scope.addThing = function() {
       if($scope.newThing === '') {
         return;
