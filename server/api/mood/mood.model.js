@@ -5,17 +5,24 @@ var parse = require('csv-parse');
 
 var Mood = {};
 
-var options = {
-	host: 'api.emotient.com',
-	path: '/v1/analytics/1d746ac6-6327-251f-5cbc-a1f8026104af',
-	method: 'GET',
-	headers: {
-		'Content-Type': 'application/json',
-		'Authorization': '4217d623-66bd-4709-ae44-b3dadd3251b8'
-	}
+// /v1/analytics/1d746ac6-6327-251f-5cbc-a1f8026104af
+
+var getOptionFor = function(path) {
+	var options = {
+		host: 'api.emotient.com',
+		path: '',
+		// method: 'GET',
+		headers: {
+			// 'Content-Type': 'application/json',
+			'Authorization': '4217d623-66bd-4709-ae44-b3dadd3251b8'
+		}
+	};
+	options.path = path;
+	return options;
 };
 
-Mood.get = function(callback) {
+Mood.all = function(callback) {
+	var options = getOptionFor('/v1/media');
 	console.log("%j", options);
 	https.get(options, function(response) {
 		var str = "";
@@ -23,18 +30,33 @@ Mood.get = function(callback) {
 			str += chunk;
 		});
 
-		//the whole response has been recieved, so we just print it out here
 		response.on('end', function () {
-			console.log("%j", str);
+			var items = JSON.parse(str);
+			callback(null, items);
+		});
+	});
+};
 
+Mood.get = function(callback) {
 
-// require('should');
-
-// var input = '#Welcome\n"1","2","3","4"\n"a","b","c","d"';
-			parse(str, {comment: '#'}, function(err, output){
-				callback(null, output);
+	Mood.all(function(err, items) {
+		var id = items.items[items.items.length-1].id;
+		console.log("last items: %j", id);
+		var options = getOptionFor('/v1/analytics/' + id);
+		console.log("%j", options);
+		https.get(options, function(response) {
+			var str = "";
+			response.on('data', function (chunk) {
+				str += chunk;
 			});
 
+			//the whole response has been recieved, so we just print it out here
+			response.on('end', function () {
+				// console.log("%j", str);
+				parse(str, {comment: '#'}, function(err, output){
+					callback(null, output);
+				});
+			});
 		});
 	});
 };
